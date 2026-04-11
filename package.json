@@ -1,0 +1,22 @@
+{
+  "name": "codeql-gitea-sync",
+  "version": "1.0.0",
+  "description": "Fetch CodeQL security alerts from GitHub and create corresponding issues on Gitea",
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.0",
+    "@types/node": "^20.14.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.0"
+  }
+}
