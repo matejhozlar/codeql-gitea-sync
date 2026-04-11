@@ -57,9 +57,7 @@ export async function fetchAlerts(
 
     if (!res.ok) {
       const body = await res.text();
-      throw new Error(
-        `GitHub API error (${res.status}): ${body}`,
-      );
+      throw new Error(`GitHub API error (${res.status}): ${body}`);
     }
 
     const alerts: GitHubAlert[] = await res.json();

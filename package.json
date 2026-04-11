@@ -3,18 +3,33 @@
   "version": "1.0.0",
   "description": "Fetch CodeQL security alerts from GitHub and create corresponding issues on Gitea",
   "type": "module",
+  "packageManager": "pnpm@10.33.0",
   "scripts": {
     "start": "tsx src/index.ts",
     "typecheck": "tsc --noEmit",
-    "build": "tsc"
+    "build": "tsc",
+    "format": "prettier --write src",
+    "format:check": "prettier --check src",
+    "lint": "eslint src",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "src/**/*.{ts,js,json,md}": [
+      "prettier --write"
+    ]
   },
   "engines": {
     "node": ">=18.0.0"
   },
   "devDependencies": {
+    "@types/node": "^20.14.0",
+    "eslint": "^10.2.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.8.2",
     "tsx": "^4.19.0",
     "typescript": "^5.5.0",
-    "@types/node": "^20.14.0"
+    "typescript-eslint": "^8.58.1"
   },
   "dependencies": {
     "dotenv": "^16.4.0"

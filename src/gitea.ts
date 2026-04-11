@@ -40,10 +40,9 @@ export class GiteaClient {
     let page = 1;
 
     while (true) {
-      const res = await fetch(
-        `${this.repoUrl}/labels?limit=50&page=${page}`,
-        { headers: this.headers() },
-      );
+      const res = await fetch(`${this.repoUrl}/labels?limit=50&page=${page}`, {
+        headers: this.headers(),
+      });
       if (!res.ok) {
         const body = await res.text();
         throw new Error(`Gitea getLabels error (${res.status}): ${body}`);

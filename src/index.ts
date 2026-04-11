@@ -53,33 +53,59 @@ function parseArgs(argv: string[]): Config {
   if (!giteaRepo) throw new Error("Missing --gitea-repo or GITEA_REPO");
 
   if (githubRepo.split("/").length !== 2) {
-    throw new Error(`Invalid --github-repo format: "${githubRepo}" (expected "owner/repo")`);
+    throw new Error(
+      `Invalid --github-repo format: "${githubRepo}" (expected "owner/repo")`,
+    );
   }
   if (giteaRepo.split("/").length !== 2) {
-    throw new Error(`Invalid --gitea-repo format: "${giteaRepo}" (expected "owner/repo")`);
+    throw new Error(
+      `Invalid --gitea-repo format: "${giteaRepo}" (expected "owner/repo")`,
+    );
   }
 
-  return { githubToken, githubRepo, giteaUrl, giteaToken, giteaRepo, state, dryRun };
+  return {
+    githubToken,
+    githubRepo,
+    giteaUrl,
+    giteaToken,
+    giteaRepo,
+    state,
+    dryRun,
+  };
 }
 
 async function main(): Promise<void> {
   const config = parseArgs(process.argv);
 
-  console.log(`Syncing alerts from GitHub (${config.githubRepo}) to Gitea (${config.giteaRepo})`);
+  console.log(
+    `Syncing alerts from GitHub (${config.githubRepo}) to Gitea (${config.giteaRepo})`,
+  );
   console.log(`State filter: ${config.state}`);
   if (config.dryRun) console.log("DRY RUN — no issues will be created");
 
-  const alerts = await fetchAlerts(config.githubToken, config.githubRepo, config.state);
+  const alerts = await fetchAlerts(
+    config.githubToken,
+    config.githubRepo,
+    config.state,
+  );
 
   if (alerts.length === 0) {
     console.log("No alerts found. Nothing to do.");
     return;
   }
 
-  const gitea = new GiteaClient(config.giteaUrl, config.giteaToken, config.giteaRepo);
+  const gitea = new GiteaClient(
+    config.giteaUrl,
+    config.giteaToken,
+    config.giteaRepo,
+  );
   const existingLabels = await gitea.getLabels();
 
-  const codeqlLabelId = await gitea.ensureLabel("codeql", "#5319e7", existingLabels);
+  const codeqlLabelId = await gitea.ensureLabel(
+    "codeql",
+    "#5319e7",
+    existingLabels,
+  );
 
   let created = 0;
   let skipped = 0;
@@ -105,8 +131,16 @@ async function main(): Promise<void> {
       continue;
     }
 
-    const sevLabelId = await gitea.ensureLabel(sevLabel, sevColor, existingLabels);
-    const dedupLabelId = await gitea.ensureLabel(dedupLabel, "#0075ca", existingLabels);
+    const sevLabelId = await gitea.ensureLabel(
+      sevLabel,
+      sevColor,
+      existingLabels,
+    );
+    const dedupLabelId = await gitea.ensureLabel(
+      dedupLabel,
+      "#0075ca",
+      existingLabels,
+    );
 
     const issue = await gitea.createIssue(title, body, [
       codeqlLabelId,
