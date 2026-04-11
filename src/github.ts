@@ -1,9 +1,13 @@
 export interface GitHubAlertRule {
   id: string;
+  name: string;
   severity: string;
   description: string;
   full_description?: string;
+  help?: string;
   help_uri?: string;
+  tags?: string[];
+  security_severity_level?: string;
 }
 
 export interface GitHubAlertTool {
@@ -22,18 +26,29 @@ export interface GitHubAlertLocation {
 export interface GitHubAlertInstance {
   ref?: string;
   state?: string;
+  commit_sha?: string;
+  category?: string;
   message: { text: string };
   location: GitHubAlertLocation;
   fingerprints?: Record<string, string>;
+  classifications?: string[];
 }
 
 export interface GitHubAlert {
   number: number;
   state: string;
   html_url: string;
+  created_at: string;
+  updated_at?: string;
+  fixed_at?: string;
+  dismissed_at?: string;
+  dismissed_by?: { login: string } | null;
+  dismissed_reason?: string | null;
+  dismissed_comment?: string | null;
   rule: GitHubAlertRule;
   tool: GitHubAlertTool;
   most_recent_instance: GitHubAlertInstance;
+  instances_url?: string;
 }
 
 export async function fetchAlerts(
