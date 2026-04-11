@@ -35,10 +35,6 @@ _Imported from GitHub alert #${alert.number}: ${alert.html_url}_
 _Fingerprint: ${fingerprint}_`;
 }
 
-export function alertLabel(alertNumber: number): string {
-  return `gh-alert-${alertNumber}`;
-}
-
 export function severityLabel(severity: string): string {
   const mapping: Record<string, string> = {
     error: "critical",
