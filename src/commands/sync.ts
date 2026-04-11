@@ -57,7 +57,11 @@ async function syncMapping(
   let skipped = 0;
 
   for (const alert of alerts) {
-    const isDuplicate = await isAlertAlreadySynced(gitea, alert.number);
+    const isDuplicate = await isAlertAlreadySynced(
+      gitea,
+      alert.number,
+      existingLabels,
+    );
     if (isDuplicate) {
       console.log(`    SKIP alert #${alert.number} (already synced)`);
       skipped++;
