@@ -6,7 +6,6 @@ import { isAlertAlreadySynced } from "../dedup.js";
 import {
   buildIssueTitle,
   buildIssueBody,
-  alertLabel,
   severityLabel,
 } from "../transform.js";
 
@@ -57,11 +56,7 @@ async function syncMapping(
   let skipped = 0;
 
   for (const alert of alerts) {
-    const isDuplicate = await isAlertAlreadySynced(
-      gitea,
-      alert.number,
-      existingLabels,
-    );
+    const isDuplicate = await isAlertAlreadySynced(gitea, alert.number);
     if (isDuplicate) {
       console.log(`    SKIP alert #${alert.number} (already synced)`);
       skipped++;
@@ -72,11 +67,10 @@ async function syncMapping(
     const body = buildIssueBody(alert);
     const sevLabel = severityLabel(alert.rule.severity);
     const sevColor = SEVERITY_COLORS[sevLabel] ?? "#6c757d";
-    const dedupLabel = alertLabel(alert.number);
 
     if (dryRun) {
       console.log(`    DRY RUN: would create issue "${title}"`);
-      console.log(`      Labels: codeql, ${sevLabel}, ${dedupLabel}`);
+      console.log(`      Labels: codeql, ${sevLabel}`);
       created++;
       continue;
     }
@@ -86,16 +80,10 @@ async function syncMapping(
       sevColor,
       existingLabels,
     );
-    const dedupLabelId = await gitea.ensureLabel(
-      dedupLabel,
-      "#0075ca",
-      existingLabels,
-    );
 
     const issue = await gitea.createIssue(title, body, [
       codeqlLabelId,
       sevLabelId,
-      dedupLabelId,
     ]);
 
     console.log(`    CREATED issue #${issue.number}: ${title}`);

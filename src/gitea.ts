@@ -81,15 +81,15 @@ export class GiteaClient {
     return created.id;
   }
 
-  async searchIssuesByLabel(labelName: string): Promise<GiteaIssue[]> {
+  async searchIssuesByQuery(query: string): Promise<GiteaIssue[]> {
     const res = await fetch(
-      `${this.repoUrl}/issues?labels=${encodeURIComponent(labelName)}&state=all&type=issues&limit=1`,
+      `${this.repoUrl}/issues?q=${encodeURIComponent(query)}&state=all&type=issues&limit=1`,
       { headers: this.headers() },
     );
     if (!res.ok) {
       const body = await res.text();
       throw new Error(
-        `Gitea searchIssuesByLabel error (${res.status}): ${body}`,
+        `Gitea searchIssuesByQuery error (${res.status}): ${body}`,
       );
     }
     return res.json();
