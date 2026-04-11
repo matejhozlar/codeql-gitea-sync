@@ -22,8 +22,6 @@ interface Config {
 const SEVERITY_COLORS: Record<string, string> = {
   critical: "#dc3545",
   high: "#fd7e14",
-  medium: "#ffc107",
-  low: "#28a745",
   note: "#6c757d",
 };
 
@@ -53,6 +51,13 @@ function parseArgs(argv: string[]): Config {
   if (!giteaUrl) throw new Error("Missing --gitea-url or GITEA_URL");
   if (!giteaToken) throw new Error("Missing --gitea-token or GITEA_TOKEN");
   if (!giteaRepo) throw new Error("Missing --gitea-repo or GITEA_REPO");
+
+  if (githubRepo.split("/").length !== 2) {
+    throw new Error(`Invalid --github-repo format: "${githubRepo}" (expected "owner/repo")`);
+  }
+  if (giteaRepo.split("/").length !== 2) {
+    throw new Error(`Invalid --gitea-repo format: "${giteaRepo}" (expected "owner/repo")`);
+  }
 
   return { githubToken, githubRepo, giteaUrl, giteaToken, giteaRepo, state, dryRun };
 }
@@ -91,22 +96,22 @@ async function main(): Promise<void> {
     const body = buildIssueBody(alert);
     const sevLabel = severityLabel(alert.rule.severity);
     const sevColor = SEVERITY_COLORS[sevLabel] ?? "#6c757d";
-    const fingerprintLabel = alertLabel(alert.number);
+    const dedupLabel = alertLabel(alert.number);
 
     if (config.dryRun) {
       console.log(`  DRY RUN: would create issue "${title}"`);
-      console.log(`    Labels: codeql, ${sevLabel}, ${fingerprintLabel}`);
+      console.log(`    Labels: codeql, ${sevLabel}, ${dedupLabel}`);
       created++;
       continue;
     }
 
     const sevLabelId = await gitea.ensureLabel(sevLabel, sevColor, existingLabels);
-    const fpLabelId = await gitea.ensureLabel(fingerprintLabel, "#0075ca", existingLabels);
+    const dedupLabelId = await gitea.ensureLabel(dedupLabel, "#0075ca", existingLabels);
 
     const issue = await gitea.createIssue(title, body, [
       codeqlLabelId,
       sevLabelId,
-      fpLabelId,
+      dedupLabelId,
     ]);
 
     console.log(`  CREATED issue #${issue.number}: ${title}`);

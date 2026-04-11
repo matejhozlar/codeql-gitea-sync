@@ -1,13 +1,7 @@
 import type { GitHubAlert } from "./github.js";
 
-export interface GiteaIssuePayload {
-  title: string;
-  body: string;
-  labels: number[];
-}
-
 export function buildIssueTitle(alert: GitHubAlert): string {
-  const severity = alert.rule.severity ?? "unknown";
+  const severity = severityLabel(alert.rule.severity ?? "unknown");
   const ruleId = alert.rule.id;
   const loc = alert.most_recent_instance.location;
   const path = loc.path;

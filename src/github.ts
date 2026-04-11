@@ -46,7 +46,7 @@ export async function fetchAlerts(
   let page = 1;
 
   while (true) {
-    const url = `https://api.github.com/repos/${owner}/${name}/code-scanning/alerts?state=${state}&per_page=100&page=${page}`;
+    const url = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(name)}/code-scanning/alerts?state=${encodeURIComponent(state)}&per_page=100&page=${page}`;
     const res = await fetch(url, {
       headers: {
         Authorization: `Bearer ${token}`,
