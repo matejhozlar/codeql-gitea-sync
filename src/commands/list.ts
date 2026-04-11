@@ -26,7 +26,7 @@ export async function runList(args: string[]): Promise<void> {
     "─".repeat(nameWidth),
     "─".repeat(ghWidth),
     "─".repeat(gtWidth),
-    "─".repeat(9),
+    "─".repeat(Math.max(9, ...mappings.map((m) => m.gitea.url.length))),
   ].join("  ");
 
   console.log(header);

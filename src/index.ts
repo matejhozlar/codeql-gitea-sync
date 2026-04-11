@@ -17,8 +17,20 @@ Options:
 
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
-  const command = args[0];
-  const rest = args.slice(1);
+
+  // Extract --config before dispatching so it works as a global option
+  const globalArgs: string[] = [];
+  const remaining: string[] = [];
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === "--config" && i + 1 < args.length) {
+      globalArgs.push(args[i], args[++i]);
+    } else {
+      remaining.push(args[i]);
+    }
+  }
+
+  const command = remaining[0];
+  const rest = [...remaining.slice(1), ...globalArgs];
 
   switch (command) {
     case "sync":

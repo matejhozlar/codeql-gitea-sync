@@ -77,21 +77,21 @@ export function loadConfig(configPath: string): MappingConfig[] {
     const label = m.name ?? `mapping[${i}]`;
 
     const githubToken =
-      m.github.token ?? defaults.github?.token ?? envGithubToken;
+      m.github.token || defaults.github?.token || envGithubToken;
     if (!githubToken) {
       throw new Error(
         `${label}: No GitHub token found. Set it in the mapping, defaults, or GITHUB_TOKEN env var.`,
       );
     }
 
-    const giteaToken = m.gitea.token ?? defaults.gitea?.token ?? envGiteaToken;
+    const giteaToken = m.gitea.token || defaults.gitea?.token || envGiteaToken;
     if (!giteaToken) {
       throw new Error(
         `${label}: No Gitea token found. Set it in the mapping, defaults, or GITEA_TOKEN env var.`,
       );
     }
 
-    const giteaUrl = m.gitea.url ?? defaults.gitea?.url;
+    const giteaUrl = m.gitea.url || defaults.gitea?.url;
     if (!giteaUrl) {
       throw new Error(
         `${label}: No Gitea URL found. Set it in the mapping or defaults.`,

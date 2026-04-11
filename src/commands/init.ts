@@ -23,8 +23,8 @@ interface InitMapping {
 
 interface InitConfig {
   defaults: {
-    github: { token: string };
-    gitea: { url: string; token: string };
+    github?: { token: string };
+    gitea?: { url?: string; token?: string };
     state: string;
   };
   mappings: InitMapping[];
@@ -89,14 +89,15 @@ export async function runInit(args: string[]): Promise<void> {
       return;
     }
 
-    const config: InitConfig = {
-      defaults: {
-        github: { token: githubToken },
-        gitea: { url: giteaUrl, token: giteaToken },
-        state: "open",
-      },
-      mappings,
-    };
+    const defaults: InitConfig["defaults"] = { state: "open" };
+    if (githubToken) defaults.github = { token: githubToken };
+    if (giteaUrl || giteaToken) {
+      defaults.gitea = {};
+      if (giteaUrl) defaults.gitea.url = giteaUrl;
+      if (giteaToken) defaults.gitea.token = giteaToken;
+    }
+
+    const config: InitConfig = { defaults, mappings };
 
     writeFileSync(configPath, JSON.stringify(config, null, 2) + "\n", "utf-8");
     console.log(`\nConfig written to ${configPath}`);

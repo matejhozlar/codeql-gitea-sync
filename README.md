@@ -103,6 +103,8 @@ pnpm start init
 
 ### Global options
 
+These flags can be placed before or after the command name.
+
 | Flag | Description |
 |------|-------------|
 | `--config <path>` | Path to config file (default: `codeql-sync.config.json`) |
